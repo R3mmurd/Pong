@@ -13,13 +13,20 @@ pip3 install pygame
 Run the game:
 
 ```bash
-python3 main.py
+python3 main.py [game_mode]
 ```
 
-## Game control
+### Game Mode
 
-- Key w: Move the left paddle up.
-- Key s: Move the left paddle down.
-- Key UP: Move the right paddle up.
-- Key DOWN: Move the right paddle down.
-- Key ESCAPE: Quit the game.
+There are four modes to run the game:
+
+- 0: Both paddles are controlled by AI.
+- 1: The left paddle is controlled by keys 'w' (up) and 's' (down) and the right paddle
+  is controlled by an AI.
+- 2: The left paddle is controlled by an AI and the right paddle is controlled by keys
+  up arrow and down arrow.
+- 3: The left paddle is controlled by keys 'w' (up) and 's' (down) and the right paddle
+  is controlled by keys up arrow and down arrow.
+
+By default, the game is executed with `game_mode = 1`.
+
