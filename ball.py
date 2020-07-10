@@ -62,3 +62,6 @@ class Ball:
         self.y = VIRTUAL_HEIGHT//2 - 2
         self.vx = 0
         self.vy = 0
+
+    def center(self):
+        return (self.x + self.size//2, self.y + self.size//2)

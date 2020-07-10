@@ -55,3 +55,6 @@ class Paddle:
             surface, self.color,
             pygame.Rect(int(self.x), int(self.y), self.width, self.height)
         )
+
+    def center(self):
+        return (self.x + self.width//2, self.y + self.height//2)

@@ -15,6 +15,8 @@ from constants import (
     SCREEN_WIDTH, SCREEN_HEIGHT, VIRTUAL_WIDTH, VIRTUAL_HEIGHT,
     PADDLE_SPEED, STATE_SERVE, STATE_START, STATE_PLAY, STATE_DONE, MAX_SCORE
 )
+from paddle_control import PaddleControl
+from paddleAI import PaddleAI
 
 class PongGame:
     """
@@ -26,7 +28,7 @@ class PongGame:
 
     key_pressed = {}
 
-    def __init__(self):
+    def __init__(self, game_mode):
         # Setting the screen
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption('Pong')
@@ -52,8 +54,21 @@ class PongGame:
 
         self.ball = Ball(VIRTUAL_WIDTH//2 - 2, VIRTUAL_HEIGHT//2 - 2, 4)
 
-        self.player1 = Paddle(10, 30, 5, 20)
-        self.player2 = Paddle(VIRTUAL_WIDTH - 15, VIRTUAL_HEIGHT - 50, 5, 20)
+        self.paddle1 = Paddle(10, 30, 5, 20)
+        self.paddle2 = Paddle(VIRTUAL_WIDTH - 15, VIRTUAL_HEIGHT - 50, 5, 20)
+
+        if game_mode == 0:
+            self.player1 = PaddleAI(self, 1)
+            self.player2 = PaddleAI(self, 2)
+        elif game_mode == 1:
+            self.player1 = PaddleControl(self, 1)
+            self.player2 = PaddleAI(self, 2)
+        elif game_mode == 2:
+            self.player1 = PaddleAI(self, 1)
+            self.player2 = PaddleControl(self, 2)
+        else:
+            self.player1 = PaddleControl(self, 1)
+            self.player2 = PaddleControl(self, 2)
 
         self.player1_score = 0
         self.player2_score = 0
@@ -82,12 +97,11 @@ class PongGame:
                         self.key_pressed[event.key] = True
 
             dt = self.clock.tick() / 1000
-            self.handle_input()
             self.update(dt)
             self.render()
             self.key_pressed = {}
 
-    def handle_input(self):
+    def update(self, dt):
         if self.game_state == STATE_START:
             if self.key_pressed.get(pygame.K_SPACE):
                 self.serving_player = random.randint(1, 2)
@@ -101,39 +115,13 @@ class PongGame:
                     self.ball.vx = -random.randint(140, 200)                
                 self.game_state = STATE_PLAY
         elif self.game_state == STATE_PLAY:
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_w]:
-                self.player1.vy = -PADDLE_SPEED
-            elif keys[pygame.K_s]:
-                self.player1.vy = PADDLE_SPEED
-            else:
-                self.player1.vy = 0
+            self.ball.update(dt)
+            self.player1.update(dt)
+            self.player2.update(dt)
 
-            if keys[pygame.K_UP]:
-                self.player2.vy = -PADDLE_SPEED
-            elif keys[pygame.K_DOWN]:
-                self.player2.vy = PADDLE_SPEED
-            else:
-                self.player2.vy = 0
-        elif self.game_state == STATE_DONE:
-            if self.key_pressed.get(pygame.K_SPACE):
-                self.serving_player = random.randint(1, 2)
-                self.winning_player = 0
-                self.player1_score = 0
-                self.player2_score = 0
-                self.ball.reset()
-                self.game_state = STATE_SERVE
-
-
-    def update(self, dt):
-        self.ball.update(dt)
-        self.player1.update(dt)
-        self.player2.update(dt)
-
-        if self.game_state == STATE_PLAY:
             # Check ball collisions
-            if self.ball.collides(self.player1):
-                self.ball.x = self.player1.x + self.player1.width
+            if self.ball.collides(self.paddle1):
+                self.ball.x = self.paddle1.x + self.paddle1.width
                 self.ball.vx = -self.ball.vx * 1.03
                 self.game_sounds['paddle_hit'].play()
 
@@ -142,8 +130,8 @@ class PongGame:
                 else:
                     self.ball.vy = random.randint(10, 150)
 
-            if self.ball.collides(self.player2):
-                self.ball.x = self.player2.x - self.ball.size
+            if self.ball.collides(self.paddle2):
+                self.ball.x = self.paddle2.x - self.ball.size
                 self.ball.vx = -self.ball.vx * 1.03
                 self.game_sounds['paddle_hit'].play()
 
@@ -167,8 +155,8 @@ class PongGame:
             if self.ball.x < -self.ball.size:
                 self.serving_player = 1
                 self.player2_score += 1
-                self.player1.vy = 0
-                self.player2.vy = 0
+                self.paddle1.vy = 0
+                self.paddle2.vy = 0
                 self.game_sounds['score'].play()
 
                 if self.player2_score == MAX_SCORE:
@@ -181,8 +169,8 @@ class PongGame:
             if self.ball.x > VIRTUAL_WIDTH:
                 self.serving_player = 2
                 self.player1_score += 1
-                self.player1.vy = 0
-                self.player2.vy = 0
+                self.paddle1.vy = 0
+                self.paddle2.vy = 0
                 self.game_sounds['score'].play()
 
                 if self.player1_score == MAX_SCORE:
@@ -191,6 +179,14 @@ class PongGame:
                 else:
                     self.ball.reset()
                     self.game_state = STATE_SERVE
+        elif self.game_state == STATE_DONE:
+            if self.key_pressed.get(pygame.K_SPACE):
+                self.serving_player = random.randint(1, 2)
+                self.winning_player = 0
+                self.player1_score = 0
+                self.player2_score = 0
+                self.ball.reset()
+                self.game_state = STATE_SERVE
 
     def render(self):
         self.surface.fill((40, 45, 52))
@@ -203,14 +199,14 @@ class PongGame:
                              VIRTUAL_WIDTH//2, 20
             )
         elif self.game_state == STATE_SERVE:
-            self.render_text(f"Player {self.serving_player}'s serve!'",
+            self.render_text(f"Player {self.serving_player}'s serve!",
                              'small', VIRTUAL_WIDTH//2, 10
             )
             self.render_text('Press Space to serve!', 'small',
                              VIRTUAL_WIDTH//2, 20
             )
         elif self.game_state == STATE_DONE:
-            self.render_text(f"Player {self.winning_player} wins!'", 'large',
+            self.render_text(f"Player {self.winning_player} wins!", 'large',
                              VIRTUAL_WIDTH//2, 10
             )
             self.render_text('Press Space to restart!', 'small',
@@ -228,8 +224,8 @@ class PongGame:
         )
 
         self.ball.render(self.surface)
-        self.player1.render(self.surface)
-        self.player2.render(self.surface)
+        self.paddle1.render(self.surface)
+        self.paddle2.render(self.surface)
 
         self.screen.blit(
             pygame.transform.scale(self.surface, (SCREEN_WIDTH, SCREEN_HEIGHT)),
@@ -239,8 +235,10 @@ class PongGame:
 
 
 def main():
+    game_mode = int(sys.argv[1]) if len(sys.argv) > 1 else 1
+
     pygame.init()
-    game = PongGame()
+    game = PongGame(game_mode)
     game.game_loop()
         
 
