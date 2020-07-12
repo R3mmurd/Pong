@@ -18,13 +18,25 @@ from constants import (
 from paddle_control import PaddleControl
 from paddleAI import PaddleAI
 
+pygame.init()
+
+
 class PongGame:
     """
     Class to handle a Pong game.
     """
 
-    game_fonts = None
-    game_sounds = None
+    game_fonts = {
+            'small': pygame.font.Font('font.ttf', 8),
+            'large': pygame.font.Font('font.ttf', 16),
+            'score': pygame.font.Font('font.ttf', 32) 
+        }
+
+    game_sounds = {
+            'paddle_hit': pygame.mixer.Sound('sounds/paddle_hit.wav'),
+            'score': pygame.mixer.Sound('sounds/score.wav'),
+            'wall_hit': pygame.mixer.Sound('sounds/wall_hit.wav')
+        }
 
     key_pressed = {}
 
@@ -32,20 +44,6 @@ class PongGame:
         # Setting the screen
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption('Pong')
-
-        # Loading fonts
-        self.game_fonts = {
-            'small': pygame.font.Font('font.ttf', 8),
-            'large': pygame.font.Font('font.ttf', 16),
-            'score': pygame.font.Font('font.ttf', 32) 
-        }
-
-        # Loading sounds
-        self.game_sounds = {
-            'paddle_hit': pygame.mixer.Sound('sounds/paddle_hit.wav'),
-            'score': pygame.mixer.Sound('sounds/score.wav'),
-            'wall_hit': pygame.mixer.Sound('sounds/wall_hit.wav')
-        }
 
         # Creating the virtual screen
         self.surface = pygame.Surface((VIRTUAL_WIDTH, VIRTUAL_HEIGHT))
@@ -228,7 +226,7 @@ class PongGame:
         self.paddle2.render(self.surface)
 
         self.screen.blit(
-            pygame.transform.scale(self.surface, (SCREEN_WIDTH, SCREEN_HEIGHT)),
+            pygame.transform.scale(self.surface, self.screen.get_size()),
             (0, 0)
         )
         pygame.display.update()
@@ -236,8 +234,6 @@ class PongGame:
 
 def main():
     game_mode = int(sys.argv[1]) if len(sys.argv) > 1 else 1
-
-    pygame.init()
     game = PongGame(game_mode)
     game.game_loop()
         
