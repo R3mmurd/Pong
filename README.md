@@ -30,3 +30,7 @@ There are four modes to run the game:
 
 By default, the game is executed with `game_mode = 1`.
 
+## Credits
+
+- Sound effects made with [bfxr](https://www.bfxr.net/).
+
