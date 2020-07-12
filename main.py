@@ -25,7 +25,6 @@ class PongGame:
     """
     Class to handle a Pong game.
     """
-
     game_fonts = {
             'small': pygame.font.Font('font.ttf', 8),
             'large': pygame.font.Font('font.ttf', 16),
