@@ -37,7 +37,7 @@ class PongGame:
             'wall_hit': pygame.mixer.Sound('sounds/wall_hit.wav')
         }
 
-    key_pressed = {}
+    pressed_keys = {}
 
     def __init__(self, game_mode):
         # Setting the screen
@@ -91,20 +91,20 @@ class PongGame:
                         pygame.quit()
                         return
                     else:
-                        self.key_pressed[event.key] = True
+                        self.pressed_keys[event.key] = True
 
             dt = self.clock.tick() / 1000
             self.update(dt)
             self.render()
-            self.key_pressed = {}
+            self.pressed_keys = {}
 
     def update(self, dt):
         if self.game_state == STATE_START:
-            if self.key_pressed.get(pygame.K_SPACE):
+            if self.pressed_keys.get(pygame.K_SPACE):
                 self.serving_player = random.randint(1, 2)
                 self.game_state = STATE_SERVE
         elif self.game_state == STATE_SERVE:
-            if self.key_pressed.get(pygame.K_SPACE):
+            if self.pressed_keys.get(pygame.K_SPACE):
                 self.ball.vy = random.randint(-50, 50)
                 if self.serving_player == 1:
                     self.ball.vx = random.randint(140, 200)
@@ -177,7 +177,7 @@ class PongGame:
                     self.ball.reset()
                     self.game_state = STATE_SERVE
         elif self.game_state == STATE_DONE:
-            if self.key_pressed.get(pygame.K_SPACE):
+            if self.pressed_keys.get(pygame.K_SPACE):
                 self.serving_player = random.randint(1, 2)
                 self.winning_player = 0
                 self.player1_score = 0
