@@ -26,16 +26,16 @@ class PongGame:
     Class to handle a Pong game.
     """
     game_fonts = {
-            'small': pygame.font.Font('font.ttf', 8),
-            'large': pygame.font.Font('font.ttf', 16),
-            'score': pygame.font.Font('font.ttf', 32) 
-        }
+        'small': pygame.font.Font('font.ttf', 8),
+        'large': pygame.font.Font('font.ttf', 16),
+        'score': pygame.font.Font('font.ttf', 32)
+    }
 
     game_sounds = {
-            'paddle_hit': pygame.mixer.Sound('sounds/paddle_hit.wav'),
-            'score': pygame.mixer.Sound('sounds/score.wav'),
-            'wall_hit': pygame.mixer.Sound('sounds/wall_hit.wav')
-        }
+        'paddle_hit': pygame.mixer.Sound('sounds/paddle_hit.wav'),
+        'score': pygame.mixer.Sound('sounds/score.wav'),
+        'wall_hit': pygame.mixer.Sound('sounds/wall_hit.wav')
+    }
 
     pressed_keys = {}
 
@@ -109,7 +109,7 @@ class PongGame:
                 if self.serving_player == 1:
                     self.ball.vx = random.randint(140, 200)
                 else:
-                    self.ball.vx = -random.randint(140, 200)                
+                    self.ball.vx = -random.randint(140, 200)
                 self.game_state = STATE_PLAY
         elif self.game_state == STATE_PLAY:
             self.ball.update(dt)
@@ -191,24 +191,24 @@ class PongGame:
         if self.game_state == STATE_START:
             self.render_text('Welcome to Pong!', 'small',
                              VIRTUAL_WIDTH//2, 10
-            )
+                             )
             self.render_text('Press Space to begin!', 'small',
                              VIRTUAL_WIDTH//2, 20
-            )
+                             )
         elif self.game_state == STATE_SERVE:
             self.render_text(f"Player {self.serving_player}'s serve!",
                              'small', VIRTUAL_WIDTH//2, 10
-            )
+                             )
             self.render_text('Press Space to serve!', 'small',
                              VIRTUAL_WIDTH//2, 20
-            )
+                             )
         elif self.game_state == STATE_DONE:
             self.render_text(f"Player {self.winning_player} wins!", 'large',
                              VIRTUAL_WIDTH//2, 10
-            )
+                             )
             self.render_text('Press Space to restart!', 'small',
                              VIRTUAL_WIDTH//2, 30
-            )
+                             )
 
         # Display score
         self.render_text(
@@ -235,7 +235,7 @@ def main():
     game_mode = int(sys.argv[1]) if len(sys.argv) > 1 else 1
     game = PongGame(game_mode)
     game.game_loop()
-        
+
 
 if __name__ == '__main__':
     main()

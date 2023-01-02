@@ -8,10 +8,12 @@ Date: 07/10/2020
 
 from constants import VIRTUAL_HEIGHT, PADDLE_SPEED
 
+
 class PaddleAI:
     """
     AI than controls a paddle.
     """
+
     def __init__(self, game, paddle):
         self.ball = game.ball
         self.paddle = paddle
@@ -32,11 +34,11 @@ class PaddleAI:
         ball_x, ball_y = self.ball.center()
         ball_dist = abs(paddle_x - ball_x)
         prop = ball_dist/self.paddle_dist
-    
+
         vision_height = prop*VIRTUAL_HEIGHT
 
         ball_comes = ((self.paddle == 1 and self.ball.vx < 0)
-                        or (self.paddle == 2 and self.ball.vx > 0))
+                      or (self.paddle == 2 and self.ball.vx > 0))
 
         if ball_comes and ball_y < paddle_y - vision_height:
             self.me.vy = -PADDLE_SPEED

@@ -9,10 +9,12 @@ import pygame
 
 from constants import VIRTUAL_HEIGHT
 
+
 class Paddle:
     """
     Paddle to be controlled by a player
     """
+
     def __init__(self, x, y, width, height, color=(255, 255, 255)):
         """
         Init the paddle.
@@ -40,7 +42,7 @@ class Paddle:
         :param dt: The elapsed time.
         """
         next_y = self.y + self.vy*dt
-        if self.vy < 0: 
+        if self.vy < 0:
             self.y = max(0, next_y)
         else:
             self.y = min(VIRTUAL_HEIGHT - self.height, next_y)

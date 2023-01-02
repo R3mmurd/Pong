@@ -9,10 +9,12 @@ import pygame
 
 from constants import VIRTUAL_HEIGHT, VIRTUAL_WIDTH
 
+
 class Ball:
     """
     Game ball.
     """
+
     def __init__(self, x, y, size, color=(255, 255, 255)):
         """
         Init the ball.
@@ -44,7 +46,7 @@ class Ball:
         :param dt: The elapsed time.
         """
         self.x += self.vx*dt
-        self.y += self.vy*dt        
+        self.y += self.vy*dt
 
     def render(self, surface):
         """

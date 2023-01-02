@@ -14,6 +14,7 @@ class PaddleControl:
     """
     Control for a paddle through the keyboard.
     """
+
     def __init__(self, game, paddle):
         if paddle == 1:
             self.paddle = game.paddle1
